@@ -1,6 +1,6 @@
 ﻿namespace WebApi.Enums
 {
-    enum DepartmentEnum
+    public enum DepartmentEnum
     {
         RH, 
         Financial,
