@@ -43,5 +43,11 @@ namespace WebApi.Controllers
         {
             return Ok(await _employeeInterface.InactiveEmployee(id));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> UpdateEmployee(EmployeeModel editEmployee) 
+        {
+            return Ok(await _employeeInterface.UpdateEmployee(editEmployee));
+        }
     }
 }

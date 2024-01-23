@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System.Globalization;
 using WebApi.DataContext;
 using WebApi.Models;
@@ -126,9 +127,33 @@ namespace WebApi.Service.EmployeeService
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel editEmployee)
+        public async Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel editEmployee)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+            try
+            {
+                EmployeeModel employee = _context.Employees.AsNoTracking().FirstOrDefault(x => x.Id == editEmployee.Id);
+
+                if (employee == null)
+                {
+                    serviceResponse.Datas = null;
+                    serviceResponse.Message = "Report data!";
+                    serviceResponse.Success = false;
+                }
+                
+                employee.DateChange = DateTime.Now;
+                _context.Employees.Update(editEmployee);
+                await _context.SaveChangesAsync();
+                serviceResponse.Datas = await _context.Employees.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
         }
     }
 }
