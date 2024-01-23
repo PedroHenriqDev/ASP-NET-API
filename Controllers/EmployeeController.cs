@@ -28,6 +28,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<EmployeeModel>>> GetEmployeeById(int id) 
         {
+
             return Ok(await _employeeInterface.GetEmployeeById(id));
         }
 
@@ -35,6 +36,12 @@ namespace WebApi.Controllers
         public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> CreateEmployee(EmployeeModel newEmployee)
         {
             return Ok(await _employeeInterface.CreateEmployee(newEmployee));
+        }
+
+        [HttpPut("Inactive employee")]
+        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> InactiveEmployee(int id) 
+        {
+            return Ok(await _employeeInterface.InactiveEmployee(id));
         }
     }
 }

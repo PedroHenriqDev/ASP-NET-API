@@ -101,9 +101,29 @@ namespace WebApi.Service.EmployeeService
             return serviceResponse; 
         }
 
-        public Task<ServiceResponse<List<EmployeeModel>>> InactiveEmployee(int id)
+        public async Task<ServiceResponse<List<EmployeeModel>>> InactiveEmployee(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+            try 
+            {
+
+                EmployeeModel employeeModel = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+                employeeModel.Active = false;
+                employeeModel.DateChange = DateTime.Now;
+
+                _context.Employees.Update(employeeModel);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Datas = _context.Employees.ToList();
+            }
+            catch(Exception ex) 
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<EmployeeModel>>> UpdateEmployee(EmployeeModel editEmployee)
