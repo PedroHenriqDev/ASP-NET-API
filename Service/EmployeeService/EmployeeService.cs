@@ -15,9 +15,33 @@ namespace WebApi.Service.EmployeeService
             _context = context;
         }
 
-        public Task<ServiceResponse<List<EmployeeModel>>> CreateEmployee(EmployeeModel newEmployee)
+        public async Task<ServiceResponse<List<EmployeeModel>>> CreateEmployee(EmployeeModel newEmployee)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<EmployeeModel>> serviceResponse = new ServiceResponse<List<EmployeeModel>>();
+
+            try 
+            {
+                if (newEmployee == null)
+                {
+                    serviceResponse.Datas = null;
+                    serviceResponse.Message = "Report data!";
+                    serviceResponse.Success = false;
+
+                    return serviceResponse;
+                }
+                
+                await _context.Employees.AddAsync(newEmployee);
+                await _context.SaveChangesAsync();
+                    
+                serviceResponse.Datas = await _context.Employees.ToListAsync();
+            }
+            catch (Exception ex) 
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<EmployeeModel>>> DeleteEmployee(int id)
@@ -25,9 +49,31 @@ namespace WebApi.Service.EmployeeService
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<EmployeeModel>> GetEmployeeById(int id)
+        public async Task<ServiceResponse<EmployeeModel>> GetEmployeeById(int id)
         {
-            throw new NotImplementedException();
+
+            ServiceResponse<EmployeeModel> serviceResponse = new ServiceResponse<EmployeeModel>();
+
+            try
+            {
+                if(id == 0) 
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Not found this id!";
+                    serviceResponse.Datas = null;
+                    return serviceResponse;
+                }
+
+                serviceResponse.Datas = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+
+            }
+            catch(Exception ex) 
+            {
+
+            }
+
+            return serviceResponse;
+
         }
 
         public async Task<ServiceResponse<List<EmployeeModel>>> GetEmployees()
