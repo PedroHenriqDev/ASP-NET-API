@@ -3,6 +3,7 @@ using Microsoft.Identity.Client;
 using System.Globalization;
 using WebApi.DataContext;
 using WebApi.Models;
+using WebApi.Helpers;
 
 namespace WebApi.Service.EmployeeService
 {
@@ -10,10 +11,12 @@ namespace WebApi.Service.EmployeeService
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly EmployeeServiceHelper _employeeServiceHelper;
 
-        public EmployeeService(ApplicationDbContext context)
+        public EmployeeService(ApplicationDbContext context, EmployeeServiceHelper employeeServiceHelper)
         {
             _context = context;
+            _employeeServiceHelper = employeeServiceHelper;
         }
 
         public async Task<ServiceResponse<List<EmployeeModel>>> CreateEmployee(EmployeeModel newEmployee)
@@ -27,14 +30,13 @@ namespace WebApi.Service.EmployeeService
                     serviceResponse.Datas = null;
                     serviceResponse.Message = "Report data!";
                     serviceResponse.Success = false;
-
                     return serviceResponse;
                 }
                 
                 await _context.Employees.AddAsync(newEmployee);
                 await _context.SaveChangesAsync();
                     
-                serviceResponse.Datas = await _context.Employees.ToListAsync();
+                serviceResponse.Datas = await _employeeServiceHelper.FindAllAsync();
             }
             catch (Exception ex) 
             {
@@ -63,7 +65,7 @@ namespace WebApi.Service.EmployeeService
 
                 _context.Employees.Remove(employee);
                 await _context.SaveChangesAsync();
-                serviceResponse.Datas = await _context.Employees.ToListAsync();
+                serviceResponse.Datas = await _employeeServiceHelper.FindAllAsync();
 
             }
             catch(Exception ex) 
@@ -86,14 +88,10 @@ namespace WebApi.Service.EmployeeService
 
                 if(employee == null) 
                 {
-                    serviceResponse.Datas = null;
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Id not found!";
-                    return serviceResponse;
+                    return _employeeServiceHelper.BadServiceResponse(serviceResponse, "Id not found!");
                 }
 
                 serviceResponse.Datas = employee;
-                
 
             }
             catch(Exception ex) 
@@ -111,7 +109,7 @@ namespace WebApi.Service.EmployeeService
 
             try
             {
-                serviceResponse.Datas = await _context.Employees.ToListAsync();
+                serviceResponse.Datas = await _employeeServiceHelper.FindAllAsync();
 
                 if(serviceResponse.Datas.Count == 0) 
                 {
@@ -141,7 +139,7 @@ namespace WebApi.Service.EmployeeService
                 _context.Employees.Update(employeeModel);
                 await _context.SaveChangesAsync();
 
-                serviceResponse.Datas = _context.Employees.ToList();
+                serviceResponse.Datas = await _employeeServiceHelper.FindAllAsync();
             }
             catch(Exception ex) 
             {
@@ -171,7 +169,7 @@ namespace WebApi.Service.EmployeeService
                 employee.DateChange = DateTime.Now;
                 _context.Employees.Update(editEmployee);
                 await _context.SaveChangesAsync();
-                serviceResponse.Datas = await _context.Employees.ToListAsync();
+                serviceResponse.Datas = await _employeeServiceHelper.FindAllAsync();
             }
             catch (Exception ex)
             {

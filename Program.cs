@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.DataContext;
+using WebApi.Helpers;
 using WebApi.Service.EmployeeService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmployeeInterface, EmployeeService>();
+builder.Services.AddScoped<EmployeeServiceHelper>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
