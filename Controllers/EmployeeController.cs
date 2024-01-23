@@ -20,17 +20,21 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> GetEmployees() 
+        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> GetEmployees()
         {
             return Ok(await _employeeInterface.GetEmployees());
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> CreateEmployee(EmployeeModel newEmployee) 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<EmployeeModel>>> GetEmployeeById(int id) 
         {
-            return Ok(await _employeeInterface.CreateEmployee(newEmployee));   
+            return Ok(await _employeeInterface.GetEmployeeById(id));
         }
 
-
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<List<EmployeeModel>>>> CreateEmployee(EmployeeModel newEmployee)
+        {
+            return Ok(await _employeeInterface.CreateEmployee(newEmployee));
+        }
     }
 }

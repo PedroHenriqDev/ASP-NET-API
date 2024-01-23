@@ -56,24 +56,27 @@ namespace WebApi.Service.EmployeeService
 
             try
             {
-                if(id == 0) 
+                EmployeeModel employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+
+                if(employee == null) 
                 {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Not found this id!";
                     serviceResponse.Datas = null;
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Id not found!";
                     return serviceResponse;
                 }
 
-                serviceResponse.Datas = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+                serviceResponse.Datas = employee;
+                
 
             }
             catch(Exception ex) 
             {
-
+                serviceResponse.Success=false;
+                serviceResponse.Message = ex.Message;
             }
 
             return serviceResponse;
-
         }
 
         public async Task<ServiceResponse<List<EmployeeModel>>> GetEmployees()
